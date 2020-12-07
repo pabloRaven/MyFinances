@@ -12,7 +12,7 @@ namespace MyFinances_Xemarin.ViewModels
 {
     public class BaseViewModel : INotifyPropertyChanged
     {
-        public IDataStore<Item> DataStore => DependencyService.Get<IDataStore<Item>>();
+        public IOperationService<Item> DataStore => DependencyService.Get<IOperationService<Item>>();
 
         bool isBusy = false;
         public bool IsBusy

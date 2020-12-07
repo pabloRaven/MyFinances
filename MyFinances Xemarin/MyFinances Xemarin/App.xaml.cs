@@ -8,12 +8,13 @@ namespace MyFinances_Xemarin
 {
     public partial class App : Application
     {
-
+        //TODO :uzupełnic
+        public static string BackendUrl = "";
         public App()
         {
             InitializeComponent();
 
-            DependencyService.Register<MockDataStore>();
+            DependencyService.Register<OperationService>();
             MainPage = new AppShell();
         }
 
