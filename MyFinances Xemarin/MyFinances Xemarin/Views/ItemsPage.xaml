@@ -4,7 +4,7 @@
              x:Class="MyFinances_Xemarin.Views.ItemsPage"
              Title="{Binding Title}"
              xmlns:local="clr-namespace:MyFinances_Xemarin.ViewModels"  
-             xmlns:model="clr-namespace:MyFinances_Xemarin.Models"  
+             xmlns:model="clr-namespace:MyFinances.Core.Dtos;assembly =MyFinances.Core"  
              x:Name="BrowseItemsPage">
 
     <ContentPage.ToolbarItems>
@@ -14,29 +14,71 @@
       x:DataType enables compiled bindings for better performance and compile time validation of binding expressions.
       https://docs.microsoft.com/xamarin/xamarin-forms/app-fundamentals/data-binding/compiled-bindings
     -->
-    <RefreshView x:DataType="local:ItemsViewModel" Command="{Binding LoadItemsCommand}" IsRefreshing="{Binding IsBusy, Mode=TwoWay}">
-        <CollectionView x:Name="ItemsListView"
-                ItemsSource="{Binding Items}"
+    <RefreshView x:DataType="local:ItemsViewModel" 
+                 Command="{Binding LoadItemsCommand}" 
+                 IsRefreshing="{Binding IsBusy, Mode=TwoWay}">
+        <CollectionView 
+            x:Name="ItemsListView"
+                ItemsSource="{Binding Operations}"
                 SelectionMode="None">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <StackLayout Padding="10" x:DataType="model:Item">
-                        <Label Text="{Binding Text}" 
+                    <Grid Padding="10" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackLayout Padding="10" x:DataType="model:Item">
+                            
+                            <Label Text="{Binding Name}" 
                             LineBreakMode="NoWrap" 
                             Style="{DynamicResource ListItemTextStyle}" 
                             FontSize="16" />
-                        <Label Text="{Binding Description}" 
+                            
+                            <Label Text="{Binding Description}" 
                             LineBreakMode="NoWrap"
                             Style="{DynamicResource ListItemDetailTextStyle}"
                             FontSize="13" />
-                        <StackLayout.GestureRecognizers>
+
+                            <Label Text="{Binding Value}" 
+                            LineBreakMode="NoWrap"
+                            Style="{DynamicResource ListItemDetailTextStyle}"
+                            FontSize="13" />
+                            
+                            <Label Text="{Binding Date ,  StringFormat='{0:dd-MM-yyyy}'}" 
+                            LineBreakMode="NoWrap"
+                            Style="{DynamicResource ListItemDetailTextStyle}"
+                            FontSize="13" />
+
+                        </StackLayout>
+                        
+                        <Button 
+                            Grid.Column="1"
+                            WidthRequest="70"
+                            HeightRequest="35"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center"
+                            Text="Usuń"
+                            FontSize="10"
+                            BackgroundColor="OrangeRed"
+                            Command="{Binding Source={RelativeSource AncestorType={x:Type local:ItemsViewModel}}, Path=DeleteItemCommand}"		
+                                CommandParameter="{Binding .}"
+                            >
+                            
+                        </Button>
+
+                        <Grid.GestureRecognizers>
                             <TapGestureRecognizer 
                                 NumberOfTapsRequired="1"
-                                Command="{Binding Source={RelativeSource AncestorType={x:Type local:ItemsViewModel}}, Path=ItemTapped}"		
+                                Command="{Binding Source={RelativeSource 
+                                AncestorType={x:Type local:ItemsViewModel}},
+                                Path=ItemTapped}"		
                                 CommandParameter="{Binding .}">
                             </TapGestureRecognizer>
-                        </StackLayout.GestureRecognizers>
-                    </StackLayout>
+                        </Grid.GestureRecognizers>
+                        
+                    </Grid>
+                    
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>

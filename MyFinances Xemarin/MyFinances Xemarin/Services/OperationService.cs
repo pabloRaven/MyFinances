@@ -68,7 +68,7 @@ namespace MyFinances_Xemarin.Services
             return JsonConvert.DeserializeObject<DataResponse<OperationDto>>(json);
         }
 
-        public async Task<DataResponse<IEnumerable<OperationDto>>> GetIAsync(bool forceRefresh = false)
+        public async Task<DataResponse<IEnumerable<OperationDto>>> GetIAsync()
         {
             var json = await _httpClient.GetStringAsync($"operation/");
 
