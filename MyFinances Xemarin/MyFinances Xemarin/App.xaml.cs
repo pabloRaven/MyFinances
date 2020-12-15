@@ -9,7 +9,7 @@ namespace MyFinances_Xemarin
     public partial class App : Application
     {
         //TODO :uzupełnic
-        public static string BackendUrl = "";
+        public static string BackendUrl = "http://10.0.2.2:83/api/";
         public App()
         {
             InitializeComponent();

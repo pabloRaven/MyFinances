@@ -54,6 +54,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="sqlite-net-pcl">
+      <Version>1.7.335</Version>
+    </PackageReference>
     <PackageReference Include="Xamarin.Forms" Version="4.6.0.1141" />
     <PackageReference Include="Xamarin.Essentials" Version="1.5.3.2" />
   </ItemGroup>
@@ -90,7 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MyFinances Xemarin\MyFinances Xemarin.csproj">
-      <Project>{7136F055-9F13-415F-B68D-7BD9F8CBDB28}</Project>
+      <Project>{E3423D83-68A3-4CDC-8A05-F9EC9EF70FF9}</Project>
       <Name>MyFinances Xemarin</Name>
     </ProjectReference>
   </ItemGroup>

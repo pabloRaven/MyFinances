@@ -9,7 +9,7 @@ namespace MyFinances_Xemarin.ViewModels
     {
         public AboutViewModel()
         {
-            Title = "About";
+            Title = "O Nas";
             OpenWebCommand = new Command(async () => await Browser.OpenAsync("https://aka.ms/xamain-quickstart"));
         }
 

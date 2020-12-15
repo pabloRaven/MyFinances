@@ -1,33 +1,56 @@
-﻿using System;
+﻿using MyFinances.Core.Dtos;
+using MyFinances_Xemarin.Views;
+using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
-
 using Xamarin.Forms;
-
-using MyFinances_Xemarin.Models;
-using MyFinances_Xemarin.Views;
 
 namespace MyFinances_Xemarin.ViewModels
 {
     public class ItemsViewModel : BaseViewModel
     {
-        private Item _selectedItem;
 
-        public ObservableCollection<Item> Items { get; }
+        public ObservableCollection<OperationDto> Operations { get; }
         public Command LoadItemsCommand { get; }
         public Command AddItemCommand { get; }
-        public Command<Item> ItemTapped { get; }
+        public Command DeleteItemCommand { get; }
+
+        public Command<OperationDto> ItemTapped { get; }
 
         public ItemsViewModel()
         {
-            Title = "Browse";
-            Items = new ObservableCollection<Item>();
-            LoadItemsCommand = new Command(async () => await ExecuteLoadItemsCommand());
+            Title = "Operacje";
+            Operations = new ObservableCollection<OperationDto>();
+            LoadItemsCommand = new Command(async () => await
+                ExecuteLoadItemsCommand());
 
-            ItemTapped = new Command<Item>(OnItemSelected);
+            ItemTapped = new Command<OperationDto>(OnItemSelected);
 
             AddItemCommand = new Command(OnAddItem);
+            DeleteItemCommand = new Command<OperationDto>(async (x) =>
+            await OnDeleteItem(x));
+
+        }
+
+        private async Task OnDeleteItem(OperationDto operation)
+        {
+            if (operation == null)
+                return;
+
+            var dialog = await Shell.Current.DisplayAlert("Usuwanie", $"Czy napewno chcesz usunąć operacje : {operation.Name}?", "Tak", "Nie");
+
+            if (!dialog)
+                return;
+
+            var response = await OperationService.DeleteAsync(operation.Id);
+
+            if (!response.IsSuccess)
+                await ShowErrorAlert(response);
+
+            await ExecuteLoadItemsCommand();
+
+
         }
 
         async Task ExecuteLoadItemsCommand()
@@ -36,16 +59,24 @@ namespace MyFinances_Xemarin.ViewModels
 
             try
             {
-                Items.Clear();
-                var items = await DataStore.GetItemsAsync(true);
-                foreach (var item in items)
+                var response = await OperationService.GetAsync();
+                if (!response.IsSuccess)
+                    await ShowErrorAlert(response);
+
+
+                Operations.Clear();
+
+                foreach (var item in response.Data)
                 {
-                    Items.Add(item);
+                    Operations.Add(item);
                 }
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                Debug.WriteLine(ex);
+                await Shell.Current.DisplayAlert(
+                                       "Wystąpił błąd",
+                                       exception.Message,
+                                       "Ok");
             }
             finally
             {
@@ -56,31 +87,22 @@ namespace MyFinances_Xemarin.ViewModels
         public void OnAppearing()
         {
             IsBusy = true;
-            SelectedItem = null;
+            
         }
 
-        public Item SelectedItem
-        {
-            get => _selectedItem;
-            set
-            {
-                SetProperty(ref _selectedItem, value);
-                OnItemSelected(value);
-            }
-        }
 
         private async void OnAddItem(object obj)
         {
             await Shell.Current.GoToAsync(nameof(NewItemPage));
         }
 
-        async void OnItemSelected(Item item)
+        async void OnItemSelected(OperationDto operation)
         {
-            if (item == null)
+            if (operation == null)
                 return;
 
             // This will push the ItemDetailPage onto the navigation stack
-            await Shell.Current.GoToAsync($"{nameof(ItemDetailPage)}?{nameof(ItemDetailViewModel.ItemId)}={item.Id}");
+            await Shell.Current.GoToAsync($"{nameof(ItemDetailPage)}?{nameof(ItemDetailViewModel.ItemId)}={operation.Id}");
         }
     }
 }
